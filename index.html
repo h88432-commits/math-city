@@ -31,5 +31,14 @@ const bank=[
 {q:"哪一個圖形和其他三個不同類？",a:["△","▲","▽","○"],ok:3,why:"前三個都是三角形，○ 是圓形，所以它不同類。"}
 ];
 function shuffle(a){let x=[...a];for(let i=x.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x}
-let qs=shuffle(bank).slice(0,10),idx=0,tries=0,start=0;
-function startQuiz(){qs=shuffle(bank).slice(0,10);idx=0;tries=0;start=Date.now();home.classList.add('hidden');quiz.classList.remove('hidden');render()}function render(){let x=qs[idx%qs.length];num.textContent=idx+1;question.textContent=x.q;answers.innerHTML='';feedback.classList.add('hidden');x.a.forEach((v,i)=>{let b=document.createElement('button');b.className='ans';b.textContent=v;b.onclick=()=>answer(i);answers.appendChild(b)})}function answer(i){let x=qs[idx%qs.length];if(i===x.ok){feedback.textContent=(tries?'👍 第二次答對！ ':'✅ 第一次就答對！ ')+x.why;feedback.classList.remove('hidden');setTimeout(next,900)}else if(tries===0){tries=1;feedback.textContent='再想一次，我先不公布答案。';feedback.classList.remove('hidden')}else{feedback.textContent='🧠 我們拆開來想：'+x.why;feedback.classList.remove('hidden');setTimeout(next,1500)}}function next(){idx++;tries=0;if(idx>=10){alert('🎉 今日挑戰完成！下一版會結算 EXP、資源與能力。');showHome()}else render()}function showHome(){quiz.classList.add('hidden');home.classList.remove('hidden')}function parentMode(){let p=prompt('爸爸後台 PIN');if(p==='1234')alert('爸爸後台：下一版加入 7/30/90 天能力趨勢、答對率、作答時間與 AI 建議。');else if(p!==null)alert('PIN 不正確')}</script></body></html>
+const USED_KEY="mathCityUsedQuestionsV1";
+function qid(q){let h=2166136261;for(let i=0;i<q.length;i++){h^=q.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}
+function getUsed(){try{return JSON.parse(localStorage.getItem(USED_KEY)||"[]")}catch(e){return []}}
+function saveUsed(ids){localStorage.setItem(USED_KEY,JSON.stringify([...new Set(ids)]))}
+function unseenQuestions(){const used=new Set(getUsed());return bank.filter(x=>!used.has(qid(x.q)))}
+let qs=[],idx=0,tries=0,start=0;
+function startQuiz(){
+ const unseen=unseenQuestions();
+ if(unseen.length<10){alert("目前尚未有足夠的全新題目可以開始今天的 10 題。系統不會用舊題湊數。正式版會由 AI 補充並驗證新題。");return}
+ qs=shuffle(unseen).slice(0,10);saveUsed(getUsed().concat(qs.map(x=>qid(x.q))));
+ idx=0;tries=0;start=Date.now();home.classList.add('hidden');quiz.classList.remove('hidden');render()}function render(){let x=qs[idx%qs.length];num.textContent=idx+1;question.textContent=x.q;answers.innerHTML='';feedback.classList.add('hidden');x.a.forEach((v,i)=>{let b=document.createElement('button');b.className='ans';b.textContent=v;b.onclick=()=>answer(i);answers.appendChild(b)})}function answer(i){let x=qs[idx%qs.length];if(i===x.ok){feedback.textContent=(tries?'👍 第二次答對！ ':'✅ 第一次就答對！ ')+x.why;feedback.classList.remove('hidden');setTimeout(next,900)}else if(tries===0){tries=1;feedback.textContent='再想一次，我先不公布答案。';feedback.classList.remove('hidden')}else{feedback.textContent='🧠 我們拆開來想：'+x.why;feedback.classList.remove('hidden');setTimeout(next,1500)}}function next(){idx++;tries=0;if(idx>=10){alert('🎉 今日挑戰完成！下一版會結算 EXP、資源與能力。');showHome()}else render()}function showHome(){quiz.classList.add('hidden');home.classList.remove('hidden')}function parentMode(){let p=prompt('爸爸後台 PIN');if(p==='1234')alert('爸爸後台：下一版加入 7/30/90 天能力趨勢、答對率、作答時間與 AI 建議。');else if(p!==null)alert('PIN 不正確')}</script></body></html>
