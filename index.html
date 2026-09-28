@@ -8,5 +8,28 @@
 <section id="quiz" class="hidden"><div class="quiz"><div class="qno">每日挑戰 · 第 <span id="num">1</span> / 10 題</div><div class="question" id="question"></div><div class="answers" id="answers"></div><div id="feedback" class="feedback hidden"></div></div></section></main>
 <nav class="nav"><button onclick="showHome()">🏠 城市</button><button onclick="startQuiz()">🧠 做題</button><button onclick="alert('自由冒險即將開放')">🎮 冒險</button></nav>
 <script>
-const qs=[{q:"小明有 24 顆彈珠，又得到 13 顆。現在有幾顆？",a:["35","37","39","41"],ok:1,why:"24 + 13 = 37。先算 20+10=30，再算 4+3=7，所以是 37。"},{q:"找規律：2、4、6、8、？",a:["9","10","11","12"],ok:1,why:"每次都增加 2，所以 8 再加 2 是 10。"},{q:"🐶、🐱、🐰排隊。小狗不是第一個，小兔一定在小貓後面。誰可以站第一個？",a:["小狗","小貓","小兔","三個都可以"],ok:1,why:"小狗不能第一；小兔若第一就不會在小貓後面，所以小貓可以第一。"}];let idx=0,tries=0,start=0;
-function startQuiz(){idx=0;tries=0;start=Date.now();home.classList.add('hidden');quiz.classList.remove('hidden');render()}function render(){let x=qs[idx%qs.length];num.textContent=idx+1;question.textContent=x.q;answers.innerHTML='';feedback.classList.add('hidden');x.a.forEach((v,i)=>{let b=document.createElement('button');b.className='ans';b.textContent=v;b.onclick=()=>answer(i);answers.appendChild(b)})}function answer(i){let x=qs[idx%qs.length];if(i===x.ok){feedback.textContent=(tries?'👍 第二次答對！ ':'✅ 第一次就答對！ ')+x.why;feedback.classList.remove('hidden');setTimeout(next,900)}else if(tries===0){tries=1;feedback.textContent='再想一次，我先不公布答案。';feedback.classList.remove('hidden')}else{feedback.textContent='🧠 我們拆開來想：'+x.why;feedback.classList.remove('hidden');setTimeout(next,1500)}}function next(){idx++;tries=0;if(idx>=10){alert('🎉 今日挑戰完成！下一版會結算 EXP、資源與能力。');showHome()}else render()}function showHome(){quiz.classList.add('hidden');home.classList.remove('hidden')}function parentMode(){let p=prompt('爸爸後台 PIN');if(p==='1234')alert('爸爸後台：下一版加入 7/30/90 天能力趨勢、答對率、作答時間與 AI 建議。');else if(p!==null)alert('PIN 不正確')}</script></body></html>
+const bank=[
+{q:"小明有 24 顆彈珠，又得到 13 顆。現在有幾顆？",a:["35","37","39","41"],ok:1,why:"24 + 13 = 37。先算 20+10=30，再算 4+3=7，所以是 37。"},
+{q:"一本故事書有 58 頁，小安已經看了 26 頁，還剩幾頁？",a:["30","31","32","34"],ok:2,why:"58 - 26 = 32。先算 58-20=38，再算 38-6=32。"},
+{q:"一盒有 5 顆草莓，4 盒一共有幾顆？",a:["9","15","20","25"],ok:2,why:"4 個 5 合起來是 5+5+5+5=20，也就是 4×5=20。"},
+{q:"找規律：2、4、6、8、？",a:["9","10","11","12"],ok:1,why:"每次都增加 2，所以 8 再加 2 是 10。"},
+{q:"找規律：30、27、24、21、？",a:["17","18","19","20"],ok:1,why:"每次都減少 3，所以 21-3=18。"},
+{q:"哪一個數最大？",a:["47","74","44","70"],ok:1,why:"先比較十位數。74 和 70 都有 7 個十，再比較個位，4 比 0 大，所以 74 最大。"},
+{q:"現在是 3 點，再過 2 小時是幾點？",a:["4 點","5 點","6 點","1 點"],ok:1,why:"從 3 點往後數兩個小時：4 點、5 點，所以是 5 點。"},
+{q:"🐶、🐱、🐰排隊。小狗不是第一個，小兔一定在小貓後面。誰可以站第一個？",a:["小狗","小貓","小兔","三個都可以"],ok:1,why:"小狗不能第一；小兔若第一就不會在小貓後面，所以小貓可以第一。"},
+{q:"紅、藍、黃三個盒子中只有一個有寶物。寶物不在紅盒，也不在黃盒。寶物在哪裡？",a:["紅盒","藍盒","黃盒","無法知道"],ok:1,why:"排除紅盒和黃盒，只剩下藍盒。"},
+{q:"小美比小華高，小華比小明高。誰最高？",a:["小明","小華","小美","一樣高"],ok:2,why:"小美 > 小華 > 小明，所以小美最高。"},
+{q:"有 12 顆糖平均分給 3 個人，每人幾顆？",a:["3","4","5","6"],ok:1,why:"12 顆分成 3 份，每份 4 顆，因為 4+4+4=12。"},
+{q:"哪一個算式的答案是 36？",a:["20+15","40-5","18+18","30+5"],ok:2,why:"18+18=36。"},
+{q:"找規律：5、10、15、20、？",a:["21","24","25","30"],ok:2,why:"每次增加 5，所以 20+5=25。"},
+{q:"四個小朋友排隊，小安在小美前面，小美在小華前面。三人之中誰最前面？",a:["小安","小美","小華","不能確定"],ok:0,why:"小安在小美前，小美又在小華前，因此小安最前面。"},
+{q:"一枝鉛筆 8 元，買 3 枝要多少元？",a:["11","16","24","32"],ok:2,why:"3 個 8 是 8+8+8=24。"},
+{q:"袋子裡有紅球和藍球。拿出一顆一定會是紅球。下面哪個情況才可能成立？",a:["袋裡只有紅球","袋裡只有藍球","紅藍各一顆","袋子是空的"],ok:0,why:"要保證拿到紅球，袋子裡不能有藍球，所以只有紅球才符合。"},
+{q:"小明從家往東走一格，再往東走一格，最後往西走一格。他最後在家的哪一邊？",a:["東邊一格","西邊一格","回到家","北邊一格"],ok:0,why:"東兩格再往西一格，等於最後在家東邊一格。"},
+{q:"有 3 種帽子和 2 種上衣，每次選一頂帽子和一件上衣，一共有幾種不同搭配？",a:["5","6","8","9"],ok:1,why:"每頂帽子都可以搭 2 件上衣，所以 2+2+2=6 種。"},
+{q:"哥哥有 40 元，買了 17 元的橡皮擦，還剩多少元？",a:["21","22","23","24"],ok:2,why:"40-17=23。可以先減 10 得 30，再減 7 得 23。"},
+{q:"哪一個圖形和其他三個不同類？",a:["△","▲","▽","○"],ok:3,why:"前三個都是三角形，○ 是圓形，所以它不同類。"}
+];
+function shuffle(a){let x=[...a];for(let i=x.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x}
+let qs=shuffle(bank).slice(0,10),idx=0,tries=0,start=0;
+function startQuiz(){qs=shuffle(bank).slice(0,10);idx=0;tries=0;start=Date.now();home.classList.add('hidden');quiz.classList.remove('hidden');render()}function render(){let x=qs[idx%qs.length];num.textContent=idx+1;question.textContent=x.q;answers.innerHTML='';feedback.classList.add('hidden');x.a.forEach((v,i)=>{let b=document.createElement('button');b.className='ans';b.textContent=v;b.onclick=()=>answer(i);answers.appendChild(b)})}function answer(i){let x=qs[idx%qs.length];if(i===x.ok){feedback.textContent=(tries?'👍 第二次答對！ ':'✅ 第一次就答對！ ')+x.why;feedback.classList.remove('hidden');setTimeout(next,900)}else if(tries===0){tries=1;feedback.textContent='再想一次，我先不公布答案。';feedback.classList.remove('hidden')}else{feedback.textContent='🧠 我們拆開來想：'+x.why;feedback.classList.remove('hidden');setTimeout(next,1500)}}function next(){idx++;tries=0;if(idx>=10){alert('🎉 今日挑戰完成！下一版會結算 EXP、資源與能力。');showHome()}else render()}function showHome(){quiz.classList.add('hidden');home.classList.remove('hidden')}function parentMode(){let p=prompt('爸爸後台 PIN');if(p==='1234')alert('爸爸後台：下一版加入 7/30/90 天能力趨勢、答對率、作答時間與 AI 建議。');else if(p!==null)alert('PIN 不正確')}</script></body></html>
